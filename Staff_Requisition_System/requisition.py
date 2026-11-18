@@ -27,6 +27,37 @@ class Requisition:
         self.approve_requisition()
 
         return self.total
+    
+    def add_requisition(self, items):
+        if not items:
+            raise ValueError("At least one item is required.")
+
+        self.items = []
+        self.total = 0.0
+
+        for item in items:
+            if len(item) != 2:
+                raise ValueError("Each item must have a name and price.")
+
+            item_name = item[0]
+            price = item[1]
+
+            if not isinstance(item_name, str) or not item_name.strip():
+                raise ValueError("Item name cannot be empty.")
+
+            if isinstance(price, bool) or not isinstance(price, (int, float)):
+                raise ValueError("Price must be a number.")
+
+            if price < 0:
+                raise ValueError("Price cannot be negative.")
+
+            self.items.append([item_name.strip(), price])
+            self.total += price
+
+        self.approve_requisition()
+
+        return self.total
+
 
     def approve_requisition(self):
         if self.total < 500:
