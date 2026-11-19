@@ -17,16 +17,6 @@ class Requisition:
         self.approval_reference = "Not available"
         Requisition.all_requisitions.append(self)
 
-    def add_requisition(self, items):
-        self.items = items
-        self.total = 0.0
-
-        for item in self.items:
-            self.total += item[1]
-
-        self.approve_requisition()
-
-        return self.total
     
     def add_requisition(self, items):
         if not items:
@@ -74,13 +64,15 @@ class Requisition:
             print("This requisition is not pending.")
             return
 
-        if response.lower() == "approved":
+        response = response.strip().lower()
+
+        if response == "approved":
             self.status = "Approved"
             self.approval_reference = (
                 self.staff_id + str(self.requisition_id)[-3:]
             )
 
-        elif response.lower() == "not approved":
+        elif response == "not approved":
             self.status = "Not approved"
             self.approval_reference = "Not available"
 

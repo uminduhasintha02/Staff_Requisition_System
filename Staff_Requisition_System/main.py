@@ -44,8 +44,10 @@ Requisition.requisition_statistics()
 print("\n========== MANAGER RESPONSES ==========")
 
 requisition2.respond_requisition("approved")
+print("Requisition 2 has been approved.")
 
 requisition3.respond_requisition("not approved")
+print("Requisition 3 has not been approved.")
 
 
 print("\n========== UPDATED REQUISITIONS ==========")
