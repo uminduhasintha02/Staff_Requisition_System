@@ -1,16 +1,21 @@
 # Staff Requisition Management System
 
 ## Project Description
-The Staff Requisition Management System is a Python-based application developed using Object-Oriented Programming (OOP). It allows staff members to create requisitions for required items and supports an approval process.
+A Python-based Staff Requisition Management System developed using Object-Oriented Programming (OOP).
+
+The system allows staff members to submit requisitions for items, calculates the total cost, and manages approval decisions.
 
 ## Features
 - Create staff requisitions.
-- Add items and their prices.
-- Calculate the total requisition cost.
+- Add multiple items and prices.
+- Automatically calculate requisition totals.
+- Automatically approve requisitions below $500.
+- Manage pending requisitions.
+- Approve or reject requisitions.
+- Generate approval reference numbers.
+- Display all requisitions.
+- Generate requisition statistics.
 - Validate item names and prices.
-- Manage requisition approval status.
-- Generate approval references.
-- Handle invalid input using exceptions.
 
 ## Technologies Used
 - Python 3
@@ -20,23 +25,22 @@ The Staff Requisition Management System is a Python-based application developed 
 
 ## Project Structure
 
-```text
 Staff_Requisition_System/
 │
-|--- main.py
-|---requisition.py
-|---README.md
-|--- .gitignore
+├── main.py
+├── requisition.py
+├── README.md
+└── .gitignore
 
-How to run the code
+
+## How to Run
 
 1. Open the project folder in Visual Studio Code.
 2. Open the terminal.
-3. Run the following command:
+3. Run:
 
-```bash
 python main.py
-```
+
 
 ## Author
 Umindu Hasintha Chandrasiri Hiyare Hewage
