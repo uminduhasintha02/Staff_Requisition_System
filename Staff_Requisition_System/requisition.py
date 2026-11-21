@@ -1,124 +1,106 @@
+from datetime import date
+
+
 class Requisition:
 
-    requisition_counter = 10000
-    all_requisitions = []
+    requisition_count = 1
 
-    def __init__(self, date, staff_id, staff_name):
-        Requisition.requisition_counter += 1
-
-        self.date = date
+    def __init__(self, staff_id, staff_name):
+        self.date = str(date.today())
         self.staff_id = staff_id
         self.staff_name = staff_name
-        self.requisition_id = Requisition.requisition_counter
+        self.requisition_id = f"R{Requisition.requisition_count:04d}"
+        Requisition.requisition_count += 1
 
         self.items = []
-        self.total = 0.0
-        self.status = "Pending"
-        self.approval_reference = "Not available"
-        Requisition.all_requisitions.append(self)
+        self.total = 0
+        self.status = "Not Submitted"
+        self.approval_reference = None
 
-    
     def add_requisition(self, items):
         if not items:
-            raise ValueError("At least one item is required.")
+            raise ValueError("The item list cannot be empty.")
 
         self.items = []
-        self.total = 0.0
 
-        for item in items:
-            if len(item) != 2:
-                raise ValueError("Each item must have a name and price.")
-
-            item_name = item[0]
-            price = item[1]
-
-            if not isinstance(item_name, str) or not item_name.strip():
+        for item_name, price in items:
+            if not item_name.strip():
                 raise ValueError("Item name cannot be empty.")
-
-            if isinstance(price, bool) or not isinstance(price, (int, float)):
-                raise ValueError("Price must be a number.")
 
             if price < 0:
                 raise ValueError("Price cannot be negative.")
 
-            self.items.append([item_name.strip(), price])
+            self.items.append((item_name, price))
             self.total += price
 
-        self.approve_requisition()
+        if self.total < 500:
+            self.status = "Approved"
+            self.approval_reference = "FN02004"
+        else:
+            self.status = "Pending"
 
         return self.total
 
-
-    def approve_requisition(self):
-        if self.total < 500:
-            self.status = "Approved"
-            self.approval_reference = (
-                self.staff_id + str(self.requisition_id)[-3:]
-            )
-        else:
-            self.status = "Pending"
-            self.approval_reference = "Not available"
-
-    def respond_requisition(self, response):
+    def respond_requisition(self, decision):
         if self.status != "Pending":
             print("This requisition is not pending.")
             return
 
-        response = response.strip().lower()
+        decision = decision.lower()
 
-        if response == "approved":
+        if decision == "a":
             self.status = "Approved"
             self.approval_reference = (
-                self.staff_id + str(self.requisition_id)[-3:]
+                f"FN{self.requisition_id[1:]}"
             )
+            print("Requisition approved.")
 
-        elif response == "not approved":
+        elif decision == "r":
             self.status = "Not approved"
-            self.approval_reference = "Not available"
+            self.approval_reference = None
+            print("Requisition not approved.")
 
         else:
-            print("Invalid response. Please try again.")
+            print("Invalid decision.")
 
     def display_requisition(self):
-        print("\nDate:", self.date)
+        print("\n-----------------------------------")
+        print("REQUISITION DETAILS")
+        print("-----------------------------------")
+        print("Date:", self.date)
         print("Requisition ID:", self.requisition_id)
         print("Staff ID:", self.staff_id)
         print("Staff Name:", self.staff_name)
-        print("Items:", self.items)
-        print("Total: $", self.total)
+
+        print("\nRequested Items:")
+
+        for item_name, price in self.items:
+            print(f"{item_name}: ${price:.2f}")
+
+        print(f"\nTotal: ${self.total:.2f}")
         print("Status:", self.status)
-        print("Approval Reference Number:", self.approval_reference)
+        print("Approval Reference:", self.approval_reference)
+        print("-----------------------------------")
 
-    @classmethod
-    def display_requisitions(cls):
-        for requisition in cls.all_requisitions:
-            requisition.display_requisition()
+    @staticmethod
+    def requisition_statistics(requisitions):
+        total = len(requisitions)
 
-    @classmethod
-    def requisition_statistics(cls):
-        total = len(cls.all_requisitions)
+        approved = sum(
+            1 for r in requisitions if r.status == "Approved"
+        )
 
-        approved = 0
-        pending = 0
-        not_approved = 0
+        pending = sum(
+            1 for r in requisitions if r.status == "Pending"
+        )
 
-        for requisition in cls.all_requisitions:
-            if requisition.status == "Approved":
-                approved += 1
-            elif requisition.status == "Pending":
-                pending += 1
-            elif requisition.status == "Not approved":
-                not_approved += 1
-                
-        print("\n========== REQUISITION STATISTICS ==========")
-        print("Total requisitions submitted:", total)
-        print("Total approved requisitions:", approved)
-        print("Total pending requisitions:", pending)
-        print("Total not approved requisitions:", not_approved)
+        not_approved = sum(
+            1 for r in requisitions if r.status == "Not approved"
+        )
 
-        return {
-            "Total": total,
-            "Approved": approved,
-            "Pending": pending,
-            "Not approved": not_approved
-        }
+        print("\n========== STATISTICS ==========")
+        print("Total Requisitions:", total)
+        print("Approved:", approved)
+        print("Pending:", pending)
+        print("Not Approved:", not_approved)
+        print("================================")
